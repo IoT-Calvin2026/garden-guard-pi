@@ -20,3 +20,8 @@ Next, start the HiveMQ broker in a docker container using and replace EXAMPLE-KE
 ```
 docker run --name hivemq -p 8080:8080 -p 1883:1883 --pull=always -e HIVEMQ_LICENSE_KEY='EXAMPLE-KEY' -e HIVEMQ_LOG_BASED_CLUSTERING_ENABLED=true   hivemq/hivemq4:latest
 ```
+Finally, set the BROKER_HOST, PORT, and TOPIC variables in ```publisher.py``` and run the script to start publishing data.
+
+## Camera
+
+To take a photo, set the DELAY_SECONDS, TOTAL_PHOTOS, and SAVE_DIRECTORY variables in ```delayed_photo.py``` and run the script.
