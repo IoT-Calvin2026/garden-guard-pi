@@ -1,2 +1,4 @@
 paho-mqtt
 psutil
+firebase-admin
+python-dotenv
