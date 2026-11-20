@@ -1,6 +1,6 @@
 # garden-guard-pi
 
-This repository holds the core Raspberry Pi code for Garden Guard monitoring system that publishes live telemetry data over MQTT from edge sensors, posts historical event data to the database, and streams a HTTP MJPEG video live stream to the frontend.
+This repository holds the core Raspberry Pi code for the Garden Guard monitoring system, including simulated Firestore data and the HTTP MJPEG video live stream.
 
 ## Vscode PI Setup
 
@@ -9,7 +9,7 @@ This repository holds the core Raspberry Pi code for Garden Guard monitoring sys
 
 ## Local Development
 
-Ensure virtual environment and required packages (like paho-mqtt) are installed.
+Ensure the virtual environment and required packages are installed.
 ```
 python3 -m venv .venv
 source .venv/bin/activate
@@ -20,7 +20,49 @@ Next, start the HiveMQ broker in a docker container using and replace EXAMPLE-KE
 ```
 docker run --name hivemq -p 8080:8080 -p 1883:1883 --pull=always -e HIVEMQ_LICENSE_KEY='EXAMPLE-KEY' -e HIVEMQ_LOG_BASED_CLUSTERING_ENABLED=true   hivemq/hivemq4:latest
 ```
-Finally, set the BROKER_HOST, PORT, and TOPIC variables in ```publisher.py``` and run the script to start publishing data.
+
+## Firebase data simulator
+
+The Pi writes random data directly to Firestore without a backend or MQTT
+broker. Add `FIREBASE_SERVICE_ACCOUNT=firebase-service-account.json` to `.env`.
+
+The simulator uses only the modeled fields:
+
+- `events`: `eventId`, `createdAt`, `temp`, `nws_conditions`
+- `soil_moisture`: `id`, `eventId`, `type`, `soilMoisture`
+
+Create documents interactively:
+
+```
+source .venv/bin/activate
+python3 firebase_simulator.py
+```
+
+The script asks how many Event and Soil Moisture pairs to create.
+
+Create a specific number without a prompt:
+
+```
+python3 firebase_simulator.py --create 10
+```
+
+Delete a specific number of oldest documents from each collection:
+
+```
+python3 firebase_simulator.py --delete 10
+```
+
+The script also prints how many documents it deleted. `--delete` with no
+number asks for a count interactively.
+
+Clear Event and Soil Moisture collections, including legacy Motion documents:
+
+```
+python3 firebase_simulator.py --clear
+```
+
+The clear command prints a warning and requires typing `DELETE` before
+changes are made. Use `--yes` only for trusted automation.
 
 ## Camera
 
